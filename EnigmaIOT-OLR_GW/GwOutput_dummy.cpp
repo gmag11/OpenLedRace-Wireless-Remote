@@ -13,6 +13,7 @@
 #include <ESPAsyncWebServer.h>
 #include <helperFunctions.h>
 #include <debug.h>
+#include <ArduinoJson.h>
 
 #ifdef ESP32
 #include <SPIFFS.h>
@@ -30,8 +31,8 @@ GatewayOutput_dummy GwOutput;
 
 typedef struct {
     char address[18];
-    int led;
-    time_t led_start = 0;
+    int button;
+    time_t last_button_pressed = 0;
 } olr_controller_t;
 
 olr_controller_t controllers[NUM_NODES];
@@ -58,7 +59,7 @@ void GatewayOutput_dummy::configManagerExit (bool status) {
 bool GatewayOutput_dummy::begin () {
     DEBUG_INFO ("Begin");
     for (int i = 0; i < NUM_NODES; i++) {
-        controllers[i].led = leds[i];
+        controllers[i].button = leds[i];
         pinMode (leds[i], OUTPUT);
         digitalWrite (leds[i], LOW);
     }
@@ -75,14 +76,14 @@ int findLed (char* address) {
 
 
 void GatewayOutput_dummy::loop () {
-    const int LED_ON_TIME = 10;
-    for (int i = 0; i < NUM_NODES; i++) {
-        if (digitalRead (controllers[i].led)) {
-            if (millis () - controllers[i].led_start > LED_ON_TIME) {
-                digitalWrite (controllers[i].led, LOW);
-            }
-        }
-    }
+    //const int LED_ON_TIME = 10;
+    //for (int i = 0; i < NUM_NODES; i++) {
+    //    if (digitalRead (controllers[i].button)) {
+    //        if (millis () - controllers[i].last_button_pressed > LED_ON_TIME) {
+    //            digitalWrite (controllers[i].button, LOW);
+    //        }
+    //    }
+    //}
 
 }
 
@@ -90,8 +91,19 @@ bool GatewayOutput_dummy::outputDataSend (char* address, char* data, uint8_t len
     int node_id = findLed (address);
     DEBUG_INFO ("Output data send. Address %s. Data %.*s", address, length, data);
     //DEBUG_WARN ("Node_id data: %d", node_id);
-    digitalWrite (controllers[node_id].led, HIGH);
-    controllers[node_id].led_start = millis ();
+    const int capacity = JSON_ARRAY_SIZE (1) + JSON_OBJECT_SIZE (4);
+    DynamicJsonDocument jsonBuffer (capacity);
+    deserializeJson (jsonBuffer, data);
+    JsonObject root_0 = jsonBuffer[0];
+    int button = root_0["value"];
+
+    if (button > 0) {
+        digitalWrite (controllers[node_id].button, HIGH);
+        controllers[node_id].last_button_pressed = millis ();
+    } else {
+        digitalWrite (controllers[node_id].button, LOW);
+        DEBUG_WARN ("Button released. T = %d", millis () - controllers[node_id].last_button_pressed);
+    }
 }
 
 bool GatewayOutput_dummy::outputControlSend (char* address, uint8_t* data, uint8_t length) {
