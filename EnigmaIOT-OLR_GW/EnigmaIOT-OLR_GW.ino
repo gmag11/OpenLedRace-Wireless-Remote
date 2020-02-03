@@ -142,7 +142,10 @@ void processRxData (uint8_t* mac, uint8_t* buffer, uint8_t length, uint16_t lost
 		free (cayennelpp);
 
 		pld_size = serializeJson (root, payload, PAYLOAD_SIZE);
+		DEBUG_WARN ("Received CayenneLPP payload from %s --> %*.s", mac2str, pld_size, payload);
 	} else if (payload_type == RAW) {
+
+		DEBUG_WARN ("Received raw payload from %s --> %*.s", mac2str, length, buffer);
 		if (length <= PAYLOAD_SIZE) {
 			memcpy (payload, buffer, length);
 			pld_size = length;
