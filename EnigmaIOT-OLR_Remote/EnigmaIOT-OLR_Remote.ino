@@ -36,7 +36,7 @@
 #define OLR_BUTTON 14
 
 bool button_pushed = false;
-//bool button_released = false;
+bool button_released = false;
 
 void callback (uint8_t pin, uint8_t event, uint8_t count, uint16_t length);
 
@@ -44,13 +44,13 @@ DebounceEvent button = DebounceEvent (OLR_BUTTON, callback, BUTTON_PUSHBUTTON | 
 
 void callback (uint8_t pin, uint8_t event, uint8_t count, uint16_t length) {
 	if (event == EVENT_PRESSED) {
-		//button_released = false;
+		button_released = false;
 		button_pushed = true;
 		//digitalWrite (BUILTIN_LED, LOW);
-	//} else if (event == EVENT_RELEASED) {
-	//	button_pushed = false;
-	//	button_released = true;
-	//	//digitalWrite (BUILTIN_LED, HIGH);
+	} else if (event == EVENT_RELEASED) {
+		button_pushed = false;
+		button_released = true;
+		//digitalWrite (BUILTIN_LED, HIGH);
 	}
 }
 
@@ -102,21 +102,28 @@ void loop () {
 	EnigmaIOTNode.handle ();
 
 	CayenneLPP msg (20);
-	if (button_pushed) {
-		diff_button = millis () - last_button;
-		last_button = millis ();
-		Serial.printf ("%d button\n", diff_button);
-		msg.addUnixTime (0, last_button);
-		if (!EnigmaIOTNode.sendData (msg.getBuffer (), msg.getSize ())) {
-			Serial.println ("---- Error sending data");
-		} else {
-			Serial.println ("---- Data sent");
+	if (button_pushed || button_released) {
+
+		if (button_pushed) {
+			Serial.printf ("Button pushed");
+			msg.addDigitalOutput (0, 1);
+			button_pushed = false;
+		} else if (button_released) {
+			Serial.printf ("Button released");
+			msg.addDigitalOutput (0, 0);
 		}
-		button_pushed = false;
+
+		if (!EnigmaIOTNode.sendData (msg.getBuffer (), msg.getSize ())) {
+			Serial.println ("Error sending data");
+		} else {
+			Serial.println ("Data sent");
+		}
+
 	}
 
 	button.loop ();
 
+	// Test code
 	//static time_t lastSensorData;
 	//static const time_t SENSOR_PERIOD = 1000;
 	//if (millis () - lastSensorData > SENSOR_PERIOD) {
