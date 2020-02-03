@@ -9,7 +9,7 @@
   */
 
 #include <Arduino.h>
-#include "GwOutput_dummy.h"
+#include "GwOutput_OLR.h"
 #include <ESPAsyncWebServer.h>
 #include <helperFunctions.h>
 #include <debug.h>

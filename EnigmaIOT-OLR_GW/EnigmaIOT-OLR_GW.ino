@@ -10,7 +10,7 @@
 #include <Arduino.h>
 
 #include <GwOutput_generic.h>
-#include "GwOutput_dummy.h"
+#include "GwOutput_OLR.h"
 
 #ifdef ESP32
 #include <WiFi.h>
