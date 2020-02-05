@@ -28,12 +28,8 @@
 
 #include <DebounceEvent.h>
 
-#ifndef ESP8266
-#error Node only supports ESP8266 platform
-#endif
-
 #define BLUE_LED LED_BUILTIN
-#define OLR_BUTTON 14
+#define OLR_BUTTON 14 // D5
 
 bool button_pushed = false;
 bool button_released = false;
@@ -85,9 +81,9 @@ void processRxData (const uint8_t* mac, const uint8_t* buffer, uint8_t length, n
 void setup () {
 
 	Serial.begin (115200); Serial.println (); Serial.println ();
+	pinMode (BLUE_LED, OUTPUT);
+	digitalWrite (BLUE_LED, HIGH); // Turn off LED
 	EnigmaIOTNode.setLed (BLUE_LED);
-	//pinMode (BLUE_LED, OUTPUT);
-	//digitalWrite (BLUE_LED, HIGH); // Turn on LED
 	EnigmaIOTNode.onConnected (connectEventHandler);
 	EnigmaIOTNode.onDisconnected (disconnectEventHandler);
 	EnigmaIOTNode.onDataRx (processRxData);
@@ -105,18 +101,17 @@ void loop () {
 	if (button_pushed || button_released) {
 
 		if (button_pushed) {
-			Serial.printf ("Button pushed");
 			msg.addDigitalOutput (0, 1);
 			button_pushed = false;
 		} else if (button_released) {
-			Serial.printf ("Button released");
 			msg.addDigitalOutput (0, 0);
+			button_released = false;
 		}
 
 		if (!EnigmaIOTNode.sendData (msg.getBuffer (), msg.getSize ())) {
 			Serial.println ("Error sending data");
 		} else {
-			Serial.println ("Data sent");
+			//Serial.println ("Data sent");
 		}
 
 	}

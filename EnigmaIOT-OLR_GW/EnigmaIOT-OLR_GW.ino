@@ -123,8 +123,10 @@ void processRxData (uint8_t* mac, uint8_t* buffer, uint8_t length, uint16_t lost
 
 	payload = (char*)malloc (PAYLOAD_SIZE);
 
+
 	char mac_str[18];
 	mac2str (mac, mac_str);
+	DEBUG_DBG ("%s --> %s", mac_str, printHexBuffer(buffer, length));
 	if (control) {
 		processRxControlData (mac_str, buffer, length);
 		return;
@@ -142,10 +144,10 @@ void processRxData (uint8_t* mac, uint8_t* buffer, uint8_t length, uint16_t lost
 		free (cayennelpp);
 
 		pld_size = serializeJson (root, payload, PAYLOAD_SIZE);
-		DEBUG_WARN ("Received CayenneLPP payload from %s --> %*.s", mac2str, pld_size, payload);
+		DEBUG_DBG ("Received CayenneLPP payload from %s --> %.*s", mac_str, pld_size, payload);
 	} else if (payload_type == RAW) {
 
-		DEBUG_WARN ("Received raw payload from %s --> %*.s", mac2str, length, buffer);
+		DEBUG_DBG ("Received raw payload from %s --> %.*s", mac_str, length, buffer);
 		if (length <= PAYLOAD_SIZE) {
 			memcpy (payload, buffer, length);
 			pld_size = length;
@@ -156,7 +158,7 @@ void processRxData (uint8_t* mac, uint8_t* buffer, uint8_t length, uint16_t lost
 	}
 
 	GwOutput.outputDataSend (mac_str, payload, pld_size);
-	DEBUG_INFO ("Published data message from %s: %s", mac_str, payload);
+	DEBUG_INFO ("Published data message from %s: %.*s", mac_str, pld_size, payload);
 	if (lostMessages > 0) {
 		pld_size = snprintf (payload, PAYLOAD_SIZE, "%u", lostMessages);
 		GwOutput.outputDataSend (mac_str, payload, pld_size, GwOutput_data_type::lostmessages);

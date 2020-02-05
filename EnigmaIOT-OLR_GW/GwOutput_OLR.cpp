@@ -89,7 +89,7 @@ void GatewayOutput_dummy::loop () {
 
 bool GatewayOutput_dummy::outputDataSend (char* address, char* data, uint8_t length, GwOutput_data_type_t type) {
     int node_id = findLed (address);
-    DEBUG_INFO ("Output data send. Address %s. Data %.*s", address, length, data);
+    DEBUG_INFO ("Output data send. Node %d. Data %.*s", node_id, length, data);
     //DEBUG_WARN ("Node_id data: %d", node_id);
     const int capacity = JSON_ARRAY_SIZE (1) + JSON_OBJECT_SIZE (4);
     DynamicJsonDocument jsonBuffer (capacity);
@@ -102,7 +102,7 @@ bool GatewayOutput_dummy::outputDataSend (char* address, char* data, uint8_t len
         controllers[node_id].last_button_pressed = millis ();
     } else {
         digitalWrite (controllers[node_id].button, LOW);
-        DEBUG_WARN ("Button released. T = %d", millis () - controllers[node_id].last_button_pressed);
+        DEBUG_DBG ("Button released. T = %d", millis () - controllers[node_id].last_button_pressed);
     }
 }
 

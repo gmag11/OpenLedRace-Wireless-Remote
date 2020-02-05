@@ -1,0 +1,9 @@
+.vs/
+*.vcxproj
+EnigmaIOT-OLR_GW/EnigmaIOT-OLR_GW.vcxproj.filters
+*.user
+**/__vm/
+**/Debug/
+**/Release/
+*.filters
+*.sln
