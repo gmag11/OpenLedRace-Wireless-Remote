@@ -29,7 +29,7 @@
 #include <DebounceEvent.h>
 
 #define BLUE_LED LED_BUILTIN
-#define OLR_BUTTON 14 // D5
+#define OLR_BUTTON 0 // D3
 
 bool button_pushed = false;
 bool button_released = false;

@@ -37,7 +37,8 @@ typedef struct {
 
 olr_controller_t controllers[NUM_NODES];
 
-int leds[NUM_NODES] = { 14,12,13,15 };
+int leds[NUM_NODES] = { 5, 4, 0, 7 }; //{ D1,D2,D3,D7 }
+bool LED_ON = 0;
 
 void GatewayOutput_dummy::configManagerStart (EnigmaIOTGatewayClass* enigmaIotGw) {
 
