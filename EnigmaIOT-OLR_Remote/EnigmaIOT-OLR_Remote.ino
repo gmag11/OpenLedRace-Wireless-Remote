@@ -33,6 +33,7 @@
 
 bool button_pushed = false;
 bool button_released = false;
+bool reset_config = false;
 
 void callback (uint8_t pin, uint8_t event, uint8_t count, uint16_t length);
 
@@ -44,6 +45,10 @@ void callback (uint8_t pin, uint8_t event, uint8_t count, uint16_t length) {
 		button_pushed = true;
 		//digitalWrite (BUILTIN_LED, LOW);
 	} else if (event == EVENT_RELEASED) {
+		if (length > 10000) {
+			DEBUG_WARN ("Reset triggered %d ms", length);
+			reset_config = true;
+		}
 		button_pushed = false;
 		button_released = true;
 		//digitalWrite (BUILTIN_LED, HIGH);
@@ -114,6 +119,11 @@ void loop () {
 			//Serial.println ("Data sent");
 		}
 
+	}
+
+	if (button_released || reset_config) {
+		DEBUG_WARN ("Reset config");
+		EnigmaIOTNode.resetConfig ();
 	}
 
 	button.loop ();
