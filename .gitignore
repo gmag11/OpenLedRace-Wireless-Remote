@@ -7,3 +7,10 @@ EnigmaIOT-OLR_GW/EnigmaIOT-OLR_GW.vcxproj.filters
 **/Release/
 *.filters
 *.sln
+**/.vscode/
+EnigmaIOT-OLR_GW/lib/EnigmaIOT-dev/.gitignore
+EnigmaIOT-OLR_GW/lib/EnigmaIOT-dev/.travis.yml
+EnigmaIOT-OLR_GW/lib/EnigmaIOT-dev/_config.yml
+EnigmaIOT-OLR_GW/lib/EnigmaIOT-dev/.github/
+EnigmaIOT-OLR_GW/lib/EnigmaIOT-dev/
+EnigmaIOT-OLR_Remote/lib/EnigmaIOT-dev/

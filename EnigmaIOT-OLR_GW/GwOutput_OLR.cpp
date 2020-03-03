@@ -44,11 +44,11 @@ void GatewayOutput_dummy::configManagerStart (EnigmaIOTGatewayClass* enigmaIotGw
 }
 
 bool GatewayOutput_dummy::saveConfig () {
-
+    return true;
 }
 
 bool GatewayOutput_dummy::loadConfig () {
-
+    return true;
 }
 
 
@@ -61,8 +61,9 @@ bool GatewayOutput_dummy::begin () {
     for (int i = 0; i < NUM_NODES; i++) {
         controllers[i].button = leds[i];
         pinMode (leds[i], OUTPUT);
-        digitalWrite (leds[i], LOW);
+        digitalWrite (leds[i], !LED_ON);
     }
+    return true;
 }
 
 int findLed (char* address) {
@@ -98,16 +99,18 @@ bool GatewayOutput_dummy::outputDataSend (char* address, char* data, uint8_t len
     int button = root_0["value"];
 
     if (button > 0) {
-        digitalWrite (controllers[node_id].button, HIGH);
+        digitalWrite (controllers[node_id].button, LED_ON);
         controllers[node_id].last_button_pressed = millis ();
     } else {
-        digitalWrite (controllers[node_id].button, LOW);
+        digitalWrite (controllers[node_id].button, !LED_ON);
         DEBUG_DBG ("Button released. T = %d", millis () - controllers[node_id].last_button_pressed);
     }
+    return true;
 }
 
 bool GatewayOutput_dummy::outputControlSend (char* address, uint8_t* data, uint8_t length) {
     DEBUG_INFO ("Output control send. Address %s. Data %s", address, printHexBuffer(data, length));
+    return true;
 }
 
 bool GatewayOutput_dummy::newNodeSend (char* address, uint16_t node_id) {
@@ -117,8 +120,10 @@ bool GatewayOutput_dummy::newNodeSend (char* address, uint16_t node_id) {
     }
     //DEBUG_WARN ("Controller: %s, Node: %s", controllers[node_id].address, address);
     //digitalWrite (controllers[node_id].led, HIGH);
+    return true;
 }
 
 bool GatewayOutput_dummy::nodeDisconnectedSend (char* address, gwInvalidateReason_t reason) {
     DEBUG_WARN ("Node %s disconnected. Reason %d", address, reason);
+    return true;
 }
