@@ -9,12 +9,14 @@
 
 #include <Arduino.h>
 
+#define CONNECT_TO_WIFI_AP 0
+
 #include <GwOutput_generic.h>
 #include "GwOutput_OLR.h"
 
 #ifdef ESP32
 #include <WiFi.h>
-#include <AsyncTCP.h> // Comment to compile for ESP8266
+//#include <AsyncTCP.h> // Comment to compile for ESP8266
 #include <Update.h>
 #include <SPIFFS.h>
 #include "esp_system.h"
@@ -22,7 +24,7 @@
 #include "esp_tls.h"
 #elif defined(ESP8266)
 #include <ESP8266WiFi.h>
-//#include <ESPAsyncTCP.h> // Comment to compile for ESP32
+#include <ESPAsyncTCP.h> // Comment to compile for ESP32
 #include <Hash.h>
 #include <SPI.h>
 #endif // ESP32
@@ -44,12 +46,12 @@
 #include <ESPAsyncWebServer.h>
 #include <ESPAsyncWiFiManager.h>
 
-#ifndef BUILTIN_LED
-#define BUILTIN_LED 5
-#endif // BUILTIN_LED
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 5
+#endif // LED_BUILTIN
 
-#define BLUE_LED BUILTIN_LED
-#define RED_LED BUILTIN_LED
+#define BLUE_LED LED_BUILTIN
+#define RED_LED LED_BUILTIN
 
 #ifdef ESP32
 TimerHandle_t connectionLedTimer;
@@ -60,8 +62,8 @@ ETSTimer connectionLedTimer;
 const int connectionLed = BUILTIN_LED;
 boolean connectionLedFlashing = false;
 
-#if CONNECT_TO_WIFI_AP == 1
-#error Please configure CONNECT_TO_WIFI_AP to 0 on EnigmaIoTconfig.h
+#if CONNECT_TO_WIFI_AP != 0
+#error Please define CONNECT_TO_WIFI_AP as 0
 #endif
 
 void flashConnectionLed (void* led) {
@@ -243,8 +245,8 @@ void setup () {
 #elif defined ESP32
 	
 #endif
-	pinMode (BUILTIN_LED, OUTPUT);
-	digitalWrite (BUILTIN_LED, HIGH);
+	//pinMode (BUILTIN_LED, OUTPUT);
+	//digitalWrite (BUILTIN_LED, HIGH);
 	startConnectionFlash (100);
 
 
