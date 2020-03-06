@@ -37,7 +37,11 @@ typedef struct {
 
 olr_controller_t controllers[NUM_NODES];
 
-int leds[NUM_NODES] = { 5, 4, 0, 7 }; //{ D1,D2,D3,D7 }
+#ifdef ESP8266
+int leds[NUM_NODES] = { 15, 13, 12, 14 }; //{ D8,D7,D6,D5 } // ESP8266
+#elif defined ESP32
+int leds[NUM_NODES] = { 14, 27, 26, 25 }; // ESP32
+#endif
 bool LED_ON = 0;
 
 void GatewayOutput_dummy::configManagerStart (EnigmaIOTGatewayClass* enigmaIotGw) {

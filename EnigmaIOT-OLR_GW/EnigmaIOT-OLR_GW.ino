@@ -9,22 +9,22 @@
 
 #include <Arduino.h>
 
-#define CONNECT_TO_WIFI_AP 0
+#define CONNECT_TO_WIFI_AP 0 // We do not need Internet connection in this moment
+#define NUM_NODES 4 // OLR currently supports 4 players max
 
 #include <GwOutput_generic.h>
 #include "GwOutput_OLR.h"
 
 #ifdef ESP32
 #include <WiFi.h>
-//#include <AsyncTCP.h> // Comment to compile for ESP8266
+#include <AsyncTCP.h>
 #include <Update.h>
 #include <SPIFFS.h>
 #include "esp_system.h"
 #include "esp_event.h"
-#include "esp_tls.h"
-#elif defined(ESP8266)
+#elif defined ESP8266
 #include <ESP8266WiFi.h>
-#include <ESPAsyncTCP.h> // Comment to compile for ESP32
+#include <ESPAsyncTCP.h>
 #include <Hash.h>
 #include <SPI.h>
 #endif // ESP32
@@ -59,7 +59,7 @@ TimerHandle_t connectionLedTimer;
 ETSTimer connectionLedTimer;
 #endif // ESP32
 
-const int connectionLed = BUILTIN_LED;
+const int connectionLed = LED_BUILTIN;
 boolean connectionLedFlashing = false;
 
 #if CONNECT_TO_WIFI_AP != 0
@@ -68,7 +68,7 @@ boolean connectionLedFlashing = false;
 
 void flashConnectionLed (void* led) {
 	//digitalWrite (*(int*)led, !digitalRead (*(int*)led));
-	digitalWrite (BUILTIN_LED, !digitalRead (BUILTIN_LED));
+	digitalWrite (LED_BUILTIN, !digitalRead(LED_BUILTIN));
 }
 
 void startConnectionFlash (int period) {
