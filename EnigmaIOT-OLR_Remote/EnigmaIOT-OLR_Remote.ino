@@ -35,6 +35,9 @@ bool button_pushed = false;
 bool button_released = false;
 bool reset_config = false;
 
+const time_t MAX_IDLE_TIME = 600000; // After 10 minutes force deep sleep
+time_t last_activity = 0;
+
 void callback (uint8_t pin, uint8_t event, uint8_t count, uint16_t length);
 
 DebounceEvent button = DebounceEvent (OLR_BUTTON, callback, BUTTON_PUSHBUTTON | BUTTON_DEFAULT_HIGH | BUTTON_SET_PULLUP, 10, 25);
@@ -43,6 +46,7 @@ void callback (uint8_t pin, uint8_t event, uint8_t count, uint16_t length) {
 	if (event == EVENT_PRESSED) {
 		button_released = false;
 		button_pushed = true;
+		last_activity = millis ();
 		//digitalWrite (BUILTIN_LED, LOW);
 	} else if (event == EVENT_RELEASED) {
 		if (length > 10000) {
@@ -58,6 +62,7 @@ void callback (uint8_t pin, uint8_t event, uint8_t count, uint16_t length) {
 
 void connectEventHandler () {
 	Serial.println ("Connected");
+	last_activity = millis ();
 }
 
 void disconnectEventHandler () {
@@ -94,6 +99,8 @@ void setup () {
 	EnigmaIOTNode.onDataRx (processRxData);
 
 	EnigmaIOTNode.begin (&Espnow_hal, NULL, NULL, true, false);
+
+	last_activity = millis ();
 }
 
 void loop () {
@@ -127,6 +134,11 @@ void loop () {
 	}
 
 	button.loop ();
+
+	if (millis () - last_activity >= MAX_IDLE_TIME) {
+		DEBUG_WARN ("Idle time exceeded limit of %d minutes. Going to sleep mode", MAX_IDLE_TIME/60000);
+		ESP.deepSleep (0);
+	}
 
 	// Test code
 	//static time_t lastSensorData;
