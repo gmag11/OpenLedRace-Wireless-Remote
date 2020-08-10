@@ -117,7 +117,7 @@ void processRxControlData (char* macStr, uint8_t* data, uint8_t length) {
 	}
 }
 
-void processRxData (uint8_t* mac, uint8_t* buffer, uint8_t length, uint16_t lostMessages, bool control, gatewayPayload_type_t payload_type) {
+void processRxData (uint8_t* mac, uint8_t* buffer, uint8_t length, uint16_t lostMessages, bool control, gatewayPayloadEncoding_t payload_type, char* nodeName = NULL) {
 	//uint8_t *addr = mac;
 	char* payload;
 	size_t pld_size;
@@ -134,7 +134,7 @@ void processRxData (uint8_t* mac, uint8_t* buffer, uint8_t length, uint16_t lost
 		return;
 	}
 	//char* netName = EnigmaIOTGateway.getNetworkName ();
-	if (payload_type == CAYENNE) {
+	if (payload_type == CAYENNELPP) {
 		const int capacity = JSON_ARRAY_SIZE (25) + 25 * JSON_OBJECT_SIZE (4);
 		DynamicJsonDocument jsonBuffer (capacity);
 		//StaticJsonDocument<capacity> jsonBuffer;
@@ -176,7 +176,7 @@ void processRxData (uint8_t* mac, uint8_t* buffer, uint8_t length, uint16_t lost
 	free (payload);
 }
 
-void onDownlinkData (uint8_t* address, control_message_type_t msgType, char* data, unsigned int len){
+void onDownlinkData (uint8_t* address, char* nodeName, control_message_type_t msgType, char* data, unsigned int len) {
 	char *buffer;
 	unsigned int bufferLen = len;
 
@@ -196,7 +196,7 @@ void onDownlinkData (uint8_t* address, control_message_type_t msgType, char* dat
 	free (buffer);
 }
 
-void newNodeConnected (uint8_t * mac, uint16_t node_id) {
+void newNodeConnected (uint8_t* mac, uint16_t node_id, char* nodeName = NULL) {
 	char macstr[18];
 	mac2str (mac, macstr);
 	//Serial.printf ("New node connected: %s\n", macstr);

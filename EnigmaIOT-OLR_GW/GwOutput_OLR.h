@@ -19,10 +19,7 @@
 #include "WProgram.h"
 #endif
 
-#include <functional>
-typedef std::function<void (uint8_t* address, control_message_type_t msgType, char* data, unsigned int len)> onDlData_t;
-
-class GatewayOutput_dummy : public GatewayOutput_generic {
+class GatewayOutput_olr : public GatewayOutput_generic {
 protected:
 	EnigmaIOTGatewayClass* enigmaIotGateway; ///< @brief Pointer to EnigmaIOT gateway instance
 	onDlData_t downlinkCb; ///< @brief downlink processing function handle
@@ -72,7 +69,7 @@ public:
 	  * @param length Data buffer length
 	  * @return Returns `true` if sending was successful. `false` otherwise
 	  */
-	bool outputControlSend (char* address, uint8_t* data, uint8_t length);
+	bool outputControlSend (char* address, uint8_t* data, size_t length);
 
 	 /**
 	  * @brief Send new node notification
@@ -99,7 +96,7 @@ public:
 	  * @param type Type of message
 	  * @return Returns `true` if sending was successful. `false` otherwise
 	  */
-	bool outputDataSend (char* address, char* data, uint8_t length, GwOutput_data_type_t type = data);
+	bool outputDataSend (char* address, char* data, size_t length, GwOutput_data_type_t type = data);
 
 	 /**
 	  * @brief Should be called often for module management
@@ -115,6 +112,6 @@ public:
 	}
 };
 
-extern GatewayOutput_dummy GwOutput;
+extern GatewayOutput_olr GwOutput;
 
 #endif // _GWOUT_DUMMY_h
