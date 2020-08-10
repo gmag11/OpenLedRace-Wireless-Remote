@@ -1,9 +1,9 @@
 /**
-  * @file EnigmaIOTGatewayDummy.ino
-  * @version 0.8.1
-  * @date 17/01/2020
+  * @file EnigmaIOTGatewayOLR.ino
+  * @version 0.0.1
+  * @date 10/08/2020
   * @author German Martin
-  * @brief Gateway based on EnigmaIoT over ESP-NOW with dummy output module to serve as start for new gateways
+  * @brief Gateway based on EnigmaIoT over ESP-NOW with GPIO output module to serve as remote controller for OpenLedRace Project
   */
 
 
