@@ -1,9 +1,9 @@
 /**
-  * @file GwOutput_generic.h
-  * @version 0.8.1
-  * @date 17/01/2020
+  * @file GwOutput_OLR.h
+  * @version 0.0.1
+  * @date 10/08/2020
   * @author German Martin
-  * @brief  Dummy Gateway output module
+  * @brief  OpenLedRace Gateway output module
   */
 
 #ifndef _GWOUT_DUMMY_h
