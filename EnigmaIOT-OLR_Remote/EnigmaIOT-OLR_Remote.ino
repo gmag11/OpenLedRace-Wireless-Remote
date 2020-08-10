@@ -12,6 +12,8 @@
 #error Node only supports ESP8266 platform
 #endif
 
+#define CHECK_COMM_ERRORS false // disable comms error checking 
+
 #include <Arduino.h>
 #include <EnigmaIOTNode.h>
 #include <espnow_hal.h>
@@ -28,8 +30,9 @@
 
 #include <DebounceEvent.h>
 
-#define BLUE_LED LED_BUILTIN
+#define BLUE_LED 2 // LED_BUILTIN
 #define OLR_BUTTON 0 // D3
+#define BUTTON_RESET_PERIOD 15000 // Button press length that triggers a configuration reset
 
 bool button_pushed = false;
 bool button_released = false;
@@ -49,7 +52,7 @@ void callback (uint8_t pin, uint8_t event, uint8_t count, uint16_t length) {
 		last_activity = millis ();
 		//digitalWrite (BUILTIN_LED, LOW);
 	} else if (event == EVENT_RELEASED) {
-		if (length > 10000) {
+		if (length > BUTTON_RESET_PERIOD) {
 			DEBUG_WARN ("Reset triggered %d ms", length);
 			reset_config = true;
 		}
@@ -65,11 +68,11 @@ void connectEventHandler () {
 	last_activity = millis ();
 }
 
-void disconnectEventHandler () {
-	Serial.println ("Disconnected");
+void disconnectEventHandler (nodeInvalidateReason_t reason) {
+	Serial.printf ("Disconnected. Reason %d\n", reason);
 }
 
-void processRxData (const uint8_t* mac, const uint8_t* buffer, uint8_t length, nodeMessageType_t command) {
+void processRxData (const uint8_t* mac, const uint8_t* buffer, uint8_t length, nodeMessageType_t command, nodePayloadEncoding_t payloadEncoding) {
 	char macstr[18];
 	String commandStr;
 
